@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ThemeHang v2 — Spotlight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+:root{
+  --bg:#0D0D14;--card:#15141E;--card2:#1D1B28;--card3:#252233;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.13);
+  --ink:#F0EFFF;--ink2:#9B9BB8;--ink3:#5C5C78;
+  --gold:#FFB347;--gold-l:rgba(255,179,71,.14);
+  --green:#42C97A;--green-l:rgba(66,201,122,.13);
+  --red:#FF4D6D;--red-l:rgba(255,77,109,.13);
+  --blue:#4FC3F7;--blue-l:rgba(79,195,247,.13);
+  --spot:#FFD700;--spot-l:rgba(255,215,0,.16);
+  --r:13px;--rs:8px;
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+.app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto}
+
+/* HEADER */
+.hdr{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:11px 15px 9px;border-bottom:1px solid var(--border)}
+.logo{font-family:'Abril Fatface',serif;font-size:19px;letter-spacing:-.5px}
+.logo em{color:var(--gold);font-style:normal}
+.logo sup{font-size:9px;font-family:'Nunito',sans-serif;font-weight:800;color:#B388FF;vertical-align:super;margin-left:2px}
+.hdr-right{display:flex;align-items:center;gap:6px}
+.streak-pill{display:flex;align-items:center;gap:4px;background:var(--gold-l);border:1px solid rgba(255,179,71,.3);border-radius:20px;padding:4px 9px;font-size:11px;font-weight:700;color:var(--gold);cursor:pointer;user-select:none}
+.ico{width:30px;height:30px;border-radius:var(--rs);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--ink2);background:var(--card)}
+
+/* TABS */
+.tabs{flex-shrink:0;display:flex;border-bottom:1px solid var(--border)}
+.tab{flex:1;padding:8px 0;text-align:center;font-size:10px;font-weight:800;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;letter-spacing:.5px;text-transform:uppercase;user-select:none;transition:color .15s,border-color .15s}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* SCREENS */
+.scr{flex:1;overflow-y:auto;overflow-x:hidden;padding:11px 13px 14px;display:none}
+.scr.on{display:block}
+
+/* ── CATEGORY SELECTOR ── */
+.cat-selector{display:flex;gap:6px;margin-bottom:11px}
+.cat-btn{flex:1;background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:8px 6px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;user-select:none}
+.cat-btn:hover{border-color:var(--gold)}
+.cat-btn.active{border-color:var(--gold);background:var(--gold-l)}
+.cat-icon{font-size:20px;display:block;margin-bottom:3px}
+.cat-label{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--ink2)}
+.cat-btn.active .cat-label{color:var(--gold)}
+
+/* ── HANGMAN ── */
+.hangman-area{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:10px 13px;margin-bottom:11px}
+#hang-svg{width:110px;height:100px;flex-shrink:0}
+.gal{stroke:#3a384f;stroke-width:2.5;stroke-linecap:round;fill:none}
+.hp{opacity:0;transition:opacity .3s}
+.hp.show{opacity:1;animation:hp-pop .4s cubic-bezier(.34,1.4,.64,1)}
+@keyframes hp-pop{0%{opacity:0;transform-origin:50% 20%;transform:scale(.3)}100%{opacity:1;transform:scale(1)}}
+.hang-info{flex:1;min-width:0}
+.hang-pips-label{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.hang-pips{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:5px}
+.pip{width:12px;height:12px;border-radius:50%;background:var(--green);transition:background .3s,transform .2s}
+.pip.used{background:var(--red);transform:scale(.75)}
+.hang-att-num{font-family:'Abril Fatface',serif;font-size:22px;color:var(--ink)}
+.hang-att-sub{font-size:9px;color:var(--ink3);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:1px}
+
+/* THEME BANNER */
+.theme-banner{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:9px 13px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.theme-emoji{font-size:22px;flex-shrink:0}
+.theme-info{flex:1;min-width:0}
+.theme-lbl{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:2px}
+.theme-name{font-family:'Abril Fatface',serif;font-size:14px;color:var(--ink);line-height:1.2}
+.puzzle-num{font-size:10px;font-weight:700;color:var(--ink3);flex-shrink:0}
+
+/* BOARD */
+.board{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+.word-row{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:9px 11px;transition:border-color .3s,background .3s}
+.word-row.solved{border-color:rgba(66,201,122,.4);background:rgba(66,201,122,.05)}
+.word-row.spotlit{border-color:rgba(255,215,0,.25);background:rgba(255,215,0,.04)}
+.word-hint{font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.word-row.solved .word-hint{color:var(--green)}
+.word-row.spotlit .word-hint{color:var(--spot)}
+.tiles{display:flex;gap:3px;flex-wrap:wrap;align-items:center}
+.tile{width:26px;height:30px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'Abril Fatface',serif;font-size:13px;flex-shrink:0;border:2px solid rgba(255,255,255,.07);background:var(--card2);color:var(--ink);transition:background .2s,border-color .2s}
+.tile.blank{background:transparent;border-color:transparent;width:8px}
+.tile.t-solved{background:var(--green);border-color:var(--green);color:#0D0D14;animation:tile-pop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes tile-pop{0%{transform:scale(.3)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.tile.t-spot{background:var(--spot-l);border-color:rgba(255,215,0,.45);color:var(--spot);animation:tile-spot .3s ease}
+@keyframes tile-spot{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+.tile.t-gave{background:#2A1828;border-color:var(--red);color:var(--red)}
+.space-gap{width:7px;flex-shrink:0}
+
+/* GUESS AREA */
+.guess-area{margin-bottom:9px}
+.guess-row-wrap{display:flex;gap:6px;margin-bottom:6px}
+.guess-input{flex:1;min-width:0;background:var(--card);border:1.5px solid var(--border2);border-radius:var(--rs);padding:10px 11px;font-size:15px;font-family:'Nunito',sans-serif;font-weight:800;color:var(--ink);outline:none;text-transform:uppercase;letter-spacing:1.5px;transition:border-color .15s}
+.guess-input::placeholder{text-transform:none;letter-spacing:0;font-weight:600;font-size:13px;color:var(--ink3)}
+.guess-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,179,71,.1)}
+.guess-input:disabled{opacity:.4;cursor:not-allowed}
+.guess-input.shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.btn-go{flex-shrink:0;background:var(--gold);color:#0D0D14;border:none;border-radius:var(--rs);padding:10px 15px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:background .15s,transform .1s;position:relative;min-width:54px}
+.btn-go:active{transform:scale(.95)}
+.btn-go:disabled{background:var(--card3);color:var(--ink3);cursor:not-allowed;transform:none}
+.btn-go .lbl{display:block}
+.btn-go .spin{display:none;width:14px;height:14px;border:2.5px solid rgba(0,0,0,.25);border-top-color:#0D0D14;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
+.btn-go.loading .lbl{display:none}
+.btn-go.loading .spin{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-giveup{flex-shrink:0;background:var(--red-l);color:var(--red);border:1px solid rgba(255,77,109,.25);border-radius:var(--rs);padding:10px 10px;font-size:11px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap}
+.length-chips{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.lc-lbl{font-size:10px;font-weight:700;color:var(--ink3);flex-shrink:0}
+.chip{background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:3px 8px;font-size:11px;font-weight:700;color:var(--ink2);cursor:pointer;user-select:none;transition:all .15s}
+.chip:hover{border-color:var(--gold);color:var(--gold)}
+.chip.active{background:var(--gold-l);border-color:rgba(255,179,71,.5);color:var(--gold)}
+.chip.done{opacity:.35;text-decoration:line-through;cursor:default}
+
+/* FEEDBACK */
+.fb-wrap{padding:0 13px;flex-shrink:0}
+.fb{border-radius:var(--rs);padding:8px 11px;font-size:13px;font-weight:700;min-height:36px;display:flex;align-items:center;margin-bottom:6px;transition:opacity .2s;line-height:1.4}
+.fb.good{background:var(--green-l);color:var(--green)}
+.fb.bad{background:var(--red-l);color:var(--red)}
+.fb.spot{background:var(--spot-l);color:var(--spot)}
+.fb.info{background:var(--blue-l);color:var(--blue)}
+.fb.hide{opacity:0;pointer-events:none}
+
+/* HISTORY */
+.hist-sec{margin-bottom:9px}
+.hist-lbl{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.hist-list{display:flex;flex-direction:column;gap:3px;max-height:100px;overflow-y:auto}
+.hi{display:flex;align-items:center;gap:6px;padding:4px 9px;background:var(--card);border:1px solid var(--border);border-radius:6px}
+.hi-word{font-family:'Abril Fatface',serif;font-size:12px;flex-shrink:0;min-width:90px}
+.hi-word.hs{color:var(--green)}
+.hi-word.hsp{color:var(--spot)}
+.hi-word.hw{color:var(--ink3)}
+.hi-tag{font-size:9px;font-weight:800;padding:1px 6px;border-radius:8px;flex-shrink:0;text-transform:uppercase}
+.hi-tag.ts{background:var(--green-l);color:var(--green)}
+.hi-tag.tsp{background:var(--spot-l);color:var(--spot)}
+.hi-tag.tw{background:var(--red-l);color:var(--red)}
+.hi-note{font-size:10px;color:var(--ink3);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* AD */
+.ad{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:9px;margin-bottom:9px}
+.ad-lbl{font-size:9px;color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;margin-bottom:1px}
+.ad-txt{font-size:11px;color:var(--ink);font-weight:600}
+.ad-btn{flex-shrink:0;background:var(--blue);color:#fff;border:none;border-radius:var(--rs);padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif}
+
+/* STATS */
+.sl{font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.stat-row{display:flex;gap:7px;margin-bottom:13px}
+.sb{flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:10px 4px;text-align:center}
+.sb-v{font-family:'Abril Fatface',serif;font-size:20px;color:var(--ink)}
+.sb-l{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--ink3);margin-top:2px}
+.dist-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.dist-n{font-size:10px;font-weight:700;color:var(--ink2);width:22px;text-align:right;flex-shrink:0}
+.dist-wrap{flex:1;background:var(--card2);border-radius:3px;height:18px;overflow:hidden}
+.dist-fill{height:100%;background:var(--gold);border-radius:3px;display:flex;align-items:center;padding:0 6px;min-width:20px}
+.dist-fill span{font-size:9px;font-weight:700;color:#0D0D14}
+
+/* PREMIUM */
+.prem{background:var(--card);border:1px solid rgba(255,179,71,.2);border-radius:var(--r);padding:15px;margin-bottom:9px;position:relative;overflow:hidden}
+.prem::after{content:'✦';position:absolute;top:-8px;right:11px;font-size:65px;color:rgba(255,179,71,.05);pointer-events:none}
+.prem-tag{display:inline-block;background:var(--gold);color:#0D0D14;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;border-radius:4px;padding:2px 7px;margin-bottom:6px}
+.prem-title{font-family:'Abril Fatface',serif;font-size:17px;color:var(--ink);margin-bottom:2px}
+.prem-sub{font-size:11px;color:var(--ink3);margin-bottom:10px}
+.prem-perks{list-style:none;margin-bottom:12px;display:flex;flex-direction:column;gap:5px}
+.prem-perks li{font-size:11px;color:var(--ink2);display:flex;align-items:flex-start;gap:6px;line-height:1.4}
+.pd{width:4px;height:4px;background:var(--gold);border-radius:50%;flex-shrink:0;margin-top:5px}
+.btn-prem{width:100%;background:var(--gold);color:#0D0D14;border:none;border-radius:var(--rs);padding:11px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif}
+.btn-prem-out{width:100%;background:transparent;color:var(--ink3);border:1px solid var(--border2);border-radius:var(--rs);padding:9px;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:5px}
+
+/* SHOP */
+.pack{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:10px;display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.pack.feat{border-color:rgba(255,179,71,.35);background:rgba(255,179,71,.05)}
+.pack-ico{font-size:19px;flex-shrink:0}
+.pack-info{flex:1;min-width:0}
+.pack-name{font-size:12px;font-weight:700;color:var(--ink)}
+.pack-sub{font-size:10px;color:var(--ink3);margin-top:1px}
+.pack-badge{display:inline-block;background:var(--gold);color:#0D0D14;font-size:8px;font-weight:800;text-transform:uppercase;border-radius:3px;padding:1px 4px;margin-left:4px}
+.pack-btn{background:var(--gold);color:#0D0D14;border:none;border-radius:var(--rs);padding:6px 10px;font-size:11px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;flex-shrink:0}
+
+/* HOW TO */
+#how-ov{display:none;position:fixed;inset:0;background:rgba(13,13,20,.92);z-index:300;overflow-y:auto;padding:11px}
+#how-ov.show{display:flex;align-items:flex-start;justify-content:center}
+.how-sheet{background:var(--card);width:100%;max-width:460px;border-radius:var(--r);padding:16px 15px;margin:auto}
+.how-sheet h2{font-family:'Abril Fatface',serif;font-size:17px;margin-bottom:10px}
+.how-block{background:var(--card2);border-radius:var(--rs);padding:10px;margin-bottom:7px}
+.how-step{display:flex;gap:8px;margin-bottom:7px;align-items:flex-start}
+.how-step:last-child{margin-bottom:0}
+.how-n{width:21px;height:21px;background:var(--gold-l);border:1.5px solid rgba(255,179,71,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:var(--gold);flex-shrink:0}
+.how-t{font-size:12px;color:var(--ink2);line-height:1.45;padding-top:1px}
+.how-t strong{color:var(--ink);font-weight:700}
+.how-t .sp{color:var(--spot);font-weight:700}
+.how-t .gr{color:var(--green);font-weight:700}
+.leg{display:flex;flex-direction:column;gap:5px;margin-top:5px}
+.leg-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink2)}
+.leg-tile{width:22px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Abril Fatface',serif;font-size:11px;flex-shrink:0;border:2px solid transparent}
+.leg-tile.g{background:var(--green);border-color:var(--green);color:#0D0D14}
+.leg-tile.s{background:var(--spot-l);border-color:rgba(255,215,0,.45);color:var(--spot)}
+.leg-tile.e{background:var(--card2);border-color:rgba(255,255,255,.07);color:var(--ink3)}
+.btn-close-how{background:none;border:1px solid var(--border2);border-radius:var(--rs);padding:9px;font-size:12px;cursor:pointer;width:100%;margin-top:9px;font-family:'Nunito',sans-serif;color:var(--ink3);font-weight:700}
+
+/* RESULT */
+.overlay{position:fixed;inset:0;background:rgba(13,13,20,.9);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.show{opacity:1;pointer-events:all}
+.sheet{background:var(--card);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:16px 15px 26px;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);overflow-y:auto;max-height:90vh;border-top:1px solid var(--border2)}
+.overlay.show .sheet{transform:translateY(0)}
+.handle{width:28px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 13px;display:block}
+.res-emoji{font-size:46px;text-align:center;display:block;margin-bottom:4px}
+.res-title{font-family:'Abril Fatface',serif;font-size:22px;text-align:center;margin-bottom:3px;color:var(--ink)}
+.res-sub{font-size:13px;color:var(--ink3);text-align:center;margin-bottom:12px;line-height:1.5}
+.res-words{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:12px}
+.res-word{font-family:'Abril Fatface',serif;font-size:11px;padding:4px 9px;border-radius:5px;background:var(--green-l);color:var(--green)}
+.res-word.missed{background:var(--red-l);color:var(--red)}
+.res-stats{display:flex;gap:7px;margin-bottom:12px}
+.rs{flex:1;background:var(--card2);border-radius:var(--rs);padding:9px 4px;text-align:center}
+.rs-v{font-family:'Abril Fatface',serif;font-size:19px;color:var(--ink)}
+.rs-l{font-size:9px;color:var(--ink3);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:1px}
+.btn-share{background:var(--gold);color:#0D0D14;border:none;border-radius:var(--rs);padding:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;width:100%;margin-bottom:6px}
+.btn-later{background:transparent;color:var(--ink3);border:1px solid var(--border2);border-radius:var(--rs);padding:9px;font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;width:100%}
+
+/* CONFIRM */
+.conf-ov{position:fixed;inset:0;background:rgba(13,13,20,.85);z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
+.conf-ov.show{display:flex}
+.conf-card{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:19px 15px;width:100%;max-width:290px;text-align:center}
+.conf-title{font-family:'Abril Fatface',serif;font-size:16px;margin-bottom:4px}
+.conf-sub{font-size:12px;color:var(--ink3);margin-bottom:13px;line-height:1.4}
+.conf-btns{display:flex;gap:7px}
+.btn-yes{flex:1;background:var(--red);color:#fff;border:none;border-radius:var(--rs);padding:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif}
+.btn-no{flex:1;background:var(--card2);color:var(--ink);border:none;border-radius:var(--rs);padding:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif}
+
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:800;z-index:999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="hdr">
+    <div class="logo">Theme<em>Hang</em><sup>v2</sup></div>
+    <div class="hdr-right">
+      <div class="streak-pill" onclick="showTab('stats')">🔥 <span id="streak-val">3</span></div>
+      <div class="ico" onclick="openHow()">?</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" id="t-play"  onclick="showTab('play')">Play</div>
+    <div class="tab"    id="t-stats" onclick="showTab('stats')">Stats</div>
+    <div class="tab"    id="t-shop"  onclick="showTab('shop')">Shop</div>
+  </div>
+
+  <!-- ══ PLAY ══ -->
+  <div class="scr on" id="s-play">
+
+    <!-- Category selector -->
+    <div class="cat-selector">
+      <div class="cat-btn active" id="cat-movies" onclick="selectCategory('movies')">
+        <span class="cat-icon">🎬</span>
+        <div class="cat-label">Movies</div>
+      </div>
+      <div class="cat-btn" id="cat-books" onclick="selectCategory('books')">
+        <span class="cat-icon">📚</span>
+        <div class="cat-label">Books</div>
+      </div>
+      <div class="cat-btn" id="cat-capitals" onclick="selectCategory('capitals')">
+        <span class="cat-icon">🌍</span>
+        <div class="cat-label">Capitals</div>
+      </div>
+    </div>
+
+    <!-- Hangman + attempts -->
+    <div class="hangman-area">
+      <svg id="hang-svg" viewBox="0 0 110 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- Gallows -->
+        <line class="gal" x1="8"  y1="95" x2="102" y2="95"/>
+        <line class="gal" x1="25" y1="95" x2="25"  y2="8"/>
+        <line class="gal" x1="25" y1="8"  x2="70"  y2="8"/>
+        <line class="gal" x1="70" y1="8"  x2="70"  y2="22"/>
+        <circle class="gal" cx="70" cy="23" r="2.5"/>
+        <!-- 1: Head -->
+        <circle class="hp" id="p1" cx="70" cy="33" r="10" fill="#FFB347" stroke="none"/>
+        <!-- 2: Blush cheeks -->
+        <circle class="hp" id="p2a" cx="63.5" cy="35" r="3" fill="rgba(255,100,100,.4)" stroke="none"/>
+        <circle class="hp" id="p2b" cx="76.5" cy="35" r="3" fill="rgba(255,100,100,.4)" stroke="none"/>
+        <!-- 3: Normal eyes -->
+        <circle class="hp" id="p3a" cx="67" cy="31" r="1.8" fill="#1A1927" stroke="none"/>
+        <circle class="hp" id="p3b" cx="73" cy="31" r="1.8" fill="#1A1927" stroke="none"/>
+        <!-- 4: Smile -->
+        <path class="hp" id="p4" d="M65.5 36.5 Q70 40.5 74.5 36.5" stroke="#1A1927" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <!-- 5: Body -->
+        <rect class="hp" id="p5" x="63" y="43" width="14" height="20" rx="5" fill="#7C6EFF" stroke="none"/>
+        <!-- 6: Left arm + hand -->
+        <path class="hp" id="p6a" d="M63 49 Q52 53 50 61" stroke="#7C6EFF" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <circle class="hp" id="p6b" cx="49" cy="62" r="3.5" fill="#FFB347" stroke="none"/>
+        <!-- 7: Right arm + hand -->
+        <path class="hp" id="p7a" d="M77 49 Q88 53 90 61" stroke="#7C6EFF" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <circle class="hp" id="p7b" cx="91" cy="62" r="3.5" fill="#FFB347" stroke="none"/>
+        <!-- 8: Sweat drop -->
+        <ellipse class="hp" id="p8" cx="82" cy="28" rx="3" ry="4.5" fill="#4FC3F7" stroke="none" transform="rotate(15,82,28)"/>
+        <!-- 9: Mouth becomes frown (shown from attempt 9, hides smile) -->
+        <path class="hp" id="p9" d="M65.5 38.5 Q70 35 74.5 38.5" stroke="#1A1927" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <!-- 10: Left leg + foot -->
+        <path class="hp" id="p10a" d="M66 63 Q60 75 57 83" stroke="#7C6EFF" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <ellipse class="hp" id="p10b" cx="55" cy="85" rx="6" ry="3.5" fill="#7C6EFF" stroke="none"/>
+        <!-- 11: Right leg + foot -->
+        <path class="hp" id="p11a" d="M74 63 Q80 75 83 83" stroke="#7C6EFF" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <ellipse class="hp" id="p11b" cx="85" cy="85" rx="6" ry="3.5" fill="#7C6EFF" stroke="none"/>
+        <!-- 12: Tears + X eyes + tongue (game over) -->
+        <ellipse class="hp" id="p12a" cx="63" cy="37" rx="2" ry="3.2" fill="#4FC3F7" stroke="none"/>
+        <ellipse class="hp" id="p12b" cx="77" cy="37" rx="2" ry="3.2" fill="#4FC3F7" stroke="none"/>
+        <line class="hp" id="p12c" x1="64.5" y1="28.5" x2="69.5" y2="33.5" stroke="#FF4D6D" stroke-width="2.2" stroke-linecap="round"/>
+        <line class="hp" id="p12d" x1="69.5" y1="28.5" x2="64.5" y2="33.5" stroke="#FF4D6D" stroke-width="2.2" stroke-linecap="round"/>
+        <line class="hp" id="p12e" x1="70.5" y1="28.5" x2="75.5" y2="33.5" stroke="#FF4D6D" stroke-width="2.2" stroke-linecap="round"/>
+        <line class="hp" id="p12f" x1="75.5" y1="28.5" x2="70.5" y2="33.5" stroke="#FF4D6D" stroke-width="2.2" stroke-linecap="round"/>
+        <ellipse class="hp" id="p12g" cx="70" cy="41" rx="4" ry="3" fill="#FF4D6D" stroke="none"/>
+      </svg>
+
+      <div class="hang-info">
+        <div class="hang-pips-label">Attempts remaining</div>
+        <div class="hang-pips" id="hang-pips"></div>
+        <div class="hang-att-num" id="hang-att-num">12</div>
+        <div class="hang-att-sub">guesses left</div>
+      </div>
+    </div>
+
+    <div class="theme-banner">
+      <div class="theme-emoji" id="theme-emoji">🎬</div>
+      <div class="theme-info">
+        <div class="theme-lbl">Today's theme</div>
+        <div class="theme-name" id="theme-name">Loading…</div>
+      </div>
+      <div class="puzzle-num" id="puzzle-num">#1</div>
+    </div>
+
+    <div class="board" id="board"></div>
+
+    <div class="guess-area">
+      <div class="guess-row-wrap">
+        <input class="guess-input" id="guess-in" type="text" placeholder="Type a word…"
+          maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+        <button class="btn-go" id="btn-go" onclick="submitGuess()">
+          <span class="lbl">Go</span><div class="spin"></div>
+        </button>
+        <button class="btn-giveup" onclick="askGiveUp()">Give up</button>
+      </div>
+      <div class="length-chips" id="len-chips"><span class="lc-lbl">Lengths:</span></div>
+    </div>
+
+    <div class="hist-sec" id="hist-sec" style="display:none">
+      <div class="hist-lbl">Guess history</div>
+      <div class="hist-list" id="hist-list"></div>
+    </div>
+
+    <div class="ad" id="ad-banner">
+      <div><div class="ad-lbl">Sponsored</div><div class="ad-txt">Elevate – Brain Training</div></div>
+      <button class="ad-btn" onclick="adClick()">Try free →</button>
+    </div>
+
+  </div>
+
+  <!-- ══ STATS ══ -->
+  <div class="scr" id="s-stats">
+    <div class="sl">Performance</div>
+    <div class="stat-row">
+      <div class="sb"><div class="sb-v" id="ss-p">0</div><div class="sb-l">Played</div></div>
+      <div class="sb"><div class="sb-v" id="ss-w">0%</div><div class="sb-l">Win %</div></div>
+      <div class="sb"><div class="sb-v" id="ss-s">0</div><div class="sb-l">Streak</div></div>
+      <div class="sb"><div class="sb-v" id="ss-b">—</div><div class="sb-l">Best</div></div>
+    </div>
+    <div class="sl">Attempts to win</div>
+    <div id="dist-cont" style="margin-bottom:13px"></div>
+    <div class="sl">Recent puzzles</div>
+    <div id="recent-list" style="margin-bottom:13px"></div>
+    <div class="prem">
+      <div class="prem-tag">Pro</div>
+      <div class="prem-title">ThemeHang Pro ✦</div>
+      <div class="prem-sub">Every puzzle, every day</div>
+      <ul class="prem-perks">
+        <li><div class="pd"></div>New puzzles added weekly</li>
+        <li><div class="pd"></div>10 free hint coins daily</li>
+        <li><div class="pd"></div>No ads, ever</li>
+        <li><div class="pd"></div>Full archive and stats history</li>
+        <li><div class="pd"></div>Hard mode: no spotlight reveals</li>
+      </ul>
+      <button class="btn-prem" onclick="buyPro()">Start free 7-day trial → $2.99/mo</button>
+      <button class="btn-prem-out" onclick="buyPro()">Or $24.99/year — save 30%</button>
+    </div>
+  </div>
+
+  <!-- ══ SHOP ══ -->
+  <div class="scr" id="s-shop">
+    <div class="sl" style="margin-bottom:10px">Hint coins</div>
+    <div class="pack">
+      <div class="pack-ico">🪙</div>
+      <div class="pack-info"><div class="pack-name">Starter · 5 coins</div><div class="pack-sub">Good for a tricky day</div></div>
+      <button class="pack-btn" onclick="buyCoin(5,.99)">$0.99</button>
+    </div>
+    <div class="pack feat">
+      <div class="pack-ico">🏅</div>
+      <div class="pack-info"><div class="pack-name">Value · 20 coins<span class="pack-badge">Best</span></div><div class="pack-sub">Most popular</div></div>
+      <button class="pack-btn" onclick="buyCoin(20,2.99)">$2.99</button>
+    </div>
+    <div class="pack">
+      <div class="pack-ico">💎</div>
+      <div class="pack-info"><div class="pack-name">Power · 60 coins</div><div class="pack-sub">For serious players</div></div>
+      <button class="pack-btn" onclick="buyCoin(60,6.99)">$6.99</button>
+    </div>
+    <div style="height:9px"></div>
+    <div class="sl" style="margin-bottom:9px">Unlock everything</div>
+    <div class="prem">
+      <div class="prem-tag">Pro</div><div class="prem-title">ThemeHang Pro ✦</div>
+      <div class="prem-sub">10 coins/day, no ads, full archive</div>
+      <button class="btn-prem" onclick="buyPro()">Try free 7 days → $2.99/mo</button>
+    </div>
+    <div class="sl" style="margin-top:11px;margin-bottom:7px">Restore</div>
+    <button class="btn-later" onclick="restorePurchases()">Restore previous purchases</button>
+  </div>
+
+</div><!-- /app -->
+
+<div class="fb-wrap"><div class="fb hide" id="fb-bar">&nbsp;</div></div>
+
+<!-- RESULT -->
+<div class="overlay" id="res-ov">
+  <div class="sheet">
+    <span class="handle"></span>
+    <span class="res-emoji" id="res-emoji">🎉</span>
+    <div class="res-title" id="res-title">Theme solved!</div>
+    <div class="res-sub"   id="res-sub"></div>
+    <div class="res-words" id="res-words"></div>
+    <div class="res-stats">
+      <div class="rs"><div class="rs-v" id="rs-f">0</div><div class="rs-l">Found</div></div>
+      <div class="rs"><div class="rs-v" id="rs-a">0</div><div class="rs-l">Attempts</div></div>
+      <div class="rs"><div class="rs-v" id="rs-c">+3</div><div class="rs-l">Coins</div></div>
+      <div class="rs"><div class="rs-v" id="rs-s">3</div><div class="rs-l">Streak</div></div>
+    </div>
+    <button class="btn-share" onclick="shareResult()">📋 Copy &amp; Share</button>
+    <button class="btn-later" onclick="closeResult()">View stats →</button>
+  </div>
+</div>
+
+<!-- GIVE UP CONFIRM -->
+<div class="conf-ov" id="conf-ov">
+  <div class="conf-card">
+    <div class="conf-title">Give up?</div>
+    <div class="conf-sub">All hidden words will be revealed. Your streak resets to zero.</div>
+    <div class="conf-btns">
+      <button class="btn-yes" onclick="doGiveUp()">Reveal all</button>
+      <button class="btn-no"  onclick="closeConf()">Keep going</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOW TO PLAY -->
+<div id="how-ov">
+  <div class="how-sheet">
+    <h2>How to play</h2>
+    <div class="how-block">
+      <div class="how-step"><div class="how-n">1</div><div class="how-t">Pick a category — <strong>Movies</strong>, <strong>Books</strong>, or <strong>Capitals</strong>. Five hidden words in that theme are waiting.</div></div>
+      <div class="how-step"><div class="how-n">2</div><div class="how-t">Type a <strong>real English word</strong> (dictionary-checked!). It must match the letter count of at least one unsolved word, or it's rejected.</div></div>
+      <div class="how-step"><div class="how-n">3</div><div class="how-t"><span class="gr">✓ Exact match</span> — the word is solved and turns green!</div></div>
+      <div class="how-step"><div class="how-n">4</div><div class="how-t"><span class="sp">✦ Right length, wrong word</span> — any letters from your guess that appear in the remaining hidden words get <span class="sp">spotlighted in gold</span>, permanently.</div></div>
+      <div class="how-step"><div class="how-n">5</div><div class="how-t">You have <strong>12 attempts</strong>. Watch the little hangman get progressively more distressed!</div></div>
+    </div>
+    <div class="how-block">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:7px">Tile colours</div>
+      <div class="leg">
+        <div class="leg-item"><div class="leg-tile g">A</div><span><strong style="color:var(--green)">Green</strong> — word fully solved</span></div>
+        <div class="leg-item"><div class="leg-tile s">A</div><span><strong style="color:var(--spot)">Gold</strong> — letter spotlighted in a remaining word</span></div>
+        <div class="leg-item"><div class="leg-tile e">_</div><span>Empty — not yet found</span></div>
+      </div>
+    </div>
+    <div class="how-block" style="font-size:12px;color:var(--ink2);line-height:1.55">
+      <strong style="color:var(--ink)">Strategy tip:</strong> Probe with common-letter words first — even a wrong guess lights up letters across the whole board. The theme is your biggest clue: think about what letters those words likely share.
+    </div>
+    <button class="btn-close-how" onclick="closeHow()">Let's play!</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied! ✓</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   PUZZLE LIBRARY — 3 fixed categories, multiple puzzles each
+   Each puzzle: { id, emoji, theme, maxAtt, words[], hints[] }
+   words[] must be UPPERCASE. No spaces needed for single words.
+═══════════════════════════════════════════════════════ */
+const LIBRARY = {
+  movies: [
+    {
+      id:'m1', emoji:'🎬', theme:'Hollywood Blockbusters — 2000s', maxAtt:12,
+      words:  ['GLADIATOR','TITANIC','CHICAGO','BRAVEHEART','PARASITE'],
+      hints:  ['Russell Crowe in ancient Rome','Leo & Kate, iceberg','Musical — all that jazz','Mel Gibson, Scotland','Korean thriller — 2020 Oscar winner'],
+    },
+    {
+      id:'m2', emoji:'🎬', theme:'Hollywood Blockbusters — 1990s', maxAtt:12,
+      words:  ['BRAVEHEART','FORREST','SILENCE','SCHINDLER','UNFORGIVEN'],
+      hints:  ['William Wallace','Run, Forrest, run!','Of the Lambs','List — Spielberg WWII epic','Clint Eastwood western'],
+    },
+    {
+      id:'m3', emoji:'🎬', theme:'Disney & Pixar Classics', maxAtt:12,
+      words:  ['FROZEN','TANGLED','COCO','ENCANTO','MOANA'],
+      hints:  ['Let it go','Rapunzel\'s adventure','Mexican Día de los Muertos','Colombian magical family','Polynesian ocean adventure'],
+    },
+    {
+      id:'m4', emoji:'🎬', theme:'Superhero Films', maxAtt:12,
+      words:  ['BATMAN','THOR','SPIDER','PANTHER','AQUAMAN'],
+      hints:  ['Dark Knight — Gotham','God of Thunder — Marvel','Man — Peter Parker','Black — Wakanda forever','King of Atlantis'],
+    },
+  ],
+  books: [
+    {
+      id:'b1', emoji:'📚', theme:'Classic English Novels', maxAtt:12,
+      words:  ['EMMA','PERSUASION','MIDDLEMARCH','NORTHANGER','WUTHERING'],
+      hints:  ['Jane Austen matchmaker','Jane Austen — Anne Elliot','George Eliot masterpiece','Austen — Abbey','Heights — Brontë'],
+    },
+    {
+      id:'b2', emoji:'📚', theme:'Bestselling Thrillers', maxAtt:12,
+      words:  ['GONE','MISERY','SHINING','SILENCE','CARRIE'],
+      hints:  ['Girl — Gillian Flynn debut','Stephen King — author superfan','The — Stephen King hotel horror','Of the Lambs — Hannibal Lecter','Stephen King — telekinetic teen'],
+    },
+    {
+      id:'b3', emoji:'📚', theme:'Fantasy Novels', maxAtt:12,
+      words:  ['HOBBIT','NARNIA','DUNE','ERAGON','FOUNDATION'],
+      hints:  ['The — Bilbo\'s adventure','The Chronicles of —','Frank Herbert sci-fi epic','Christopher Paolini — dragon rider','Isaac Asimov — galactic empire'],
+    },
+    {
+      id:'b4', emoji:'📚', theme:'Childhood Favourites', maxAtt:12,
+      words:  ['MATILDA','CHARLOTTE','CORALINE','NARNIA','TREASURE'],
+      hints:  ['Roald Dahl — telekinetic girl','Web — Wilbur the pig','Neil Gaiman — button eyes','C.S. Lewis — lion & witch','Island — pirates & Long John Silver'],
+    },
+  ],
+  capitals: [
+    {
+      id:'c1', emoji:'🌍', theme:'Tricky Capital Cities — Europe', maxAtt:12,
+      words:  ['BERN','OSLO','VALLETTA','NICOSIA','VADUZ'],
+      hints:  ['Switzerland — not Zurich!','Norway — fjords & Vikings','Malta — smallest EU capital','Cyprus — divided city','Liechtenstein — tiny principality'],
+    },
+    {
+      id:'c2', emoji:'🌍', theme:'Tricky Capital Cities — Asia', maxAtt:12,
+      words:  ['ANKARA','ASTANA','NAYPYIDAW','DUSHANBE','THIMPHU'],
+      hints:  ['Turkey — not Istanbul!','Kazakhstan — moved from Almaty','Myanmar — built from scratch in 2006','Tajikistan','Bhutan — land of the thunder dragon'],
+    },
+    {
+      id:'c3', emoji:'🌍', theme:'Tricky Capital Cities — Oceania & Americas', maxAtt:12,
+      words:  ['CANBERRA','OTTAWA','BRASILIA','SUCRE','WELLINGTON'],
+      hints:  ['Australia — not Sydney!','Canada — not Toronto!','Brazil — built in the jungle','Bolivia — constitutional capital','New Zealand — not Auckland!'],
+    },
+    {
+      id:'c4', emoji:'🌍', theme:'African Capitals', maxAtt:12,
+      words:  ['NAIROBI','ACCRA','LILONGWE','WINDHOEK','DODOMA'],
+      hints:  ['Kenya','Ghana — Gulf of Guinea','Malawi','Namibia','Tanzania — legislative capital'],
+    },
+  ],
+};
+
+/* ═══════════════════════════════════════════════════════
+   HANGMAN: 12 stages, each is array of element IDs to show.
+   Stage index = attempt number - 1.
+═══════════════════════════════════════════════════════ */
+const STAGES = [
+  ['p1'],                       // 1  head
+  ['p2a','p2b'],                // 2  blush
+  ['p3a','p3b'],                // 3  eyes
+  ['p4'],                       // 4  smile
+  ['p5'],                       // 5  body
+  ['p6a','p6b'],                // 6  left arm
+  ['p7a','p7b'],                // 7  right arm
+  ['p8'],                       // 8  sweat drop
+  ['p9'],                       // 9  frown (smile hides)
+  ['p10a','p10b'],              // 10 left leg
+  ['p11a','p11b'],              // 11 right leg
+  ['p12a','p12b','p12c','p12d','p12e','p12f','p12g'], // 12 dead: tears, X eyes, tongue
+];
+
+/* ═══════════════════════════════════════════════════════
+   WORD VALIDATION
+   Uses Free Dictionary API — does exact lookup only.
+   Returns 200 + data for real words, 404 for nonsense.
+   Always accepts exact matches to current puzzle answers.
+   Falls back to allowing the guess if network fails.
+═══════════════════════════════════════════════════════ */
+async function isRealWord(word) {
+  // Theme answers always accepted (e.g. GLADIATOR, BRAVEHEART)
+  if (G.puzzle.words.includes(word)) return true;
+
+  try {
+    const res = await fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`,
+      { signal: AbortSignal.timeout(3000) }
+    );
+    // 200 = found in dictionary, anything else (404) = not a real word
+    return res.status === 200;
+  } catch (e) {
+    // Network error / timeout — fail open so game still works offline
+    return true;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════ */
+let fbTimer = null;
+
+function freshState(category, puzzleIdx) {
+  const puzzle = LIBRARY[category][puzzleIdx % LIBRARY[category].length];
+  return {
+    category,
+    puzzleIdx,
+    puzzle,
+    solved:   new Array(puzzle.words.length).fill(false),
+    spotlit:  puzzle.words.map(() => new Set()),  // Set of revealed letter indices per word
+    attempts: 0,
+    history:  [],
+    over:     false,
+    gaveUp:   false,
+    coins:    8,
+    streak:   3,
+    played:   12,
+    won:      9,
+    best:     0,
+    edist:    [1,2,3,2,1,0],
+    recent:   [],
+  };
+}
+
+let G = freshState('movies', 0);
+
+const maxAtt     = () => G.puzzle.maxAtt || 12;
+const attLeft    = () => maxAtt() - G.attempts;
+const countSolved= () => G.solved.filter(Boolean).length;
+const allSolved  = () => G.solved.every(Boolean);
+
+/* ═══════════════════════════════════════════════════════
+   CATEGORY SELECTION
+═══════════════════════════════════════════════════════ */
+function selectCategory(cat) {
+  if (G.category === cat && !G.over) return; // already playing this one
+  // Confirm if game in progress
+  if (!G.over && G.attempts > 0) {
+    if (!confirm('Switch category? Your current game will be lost.')) return;
+  }
+  ['movies','books','capitals'].forEach(c => {
+    document.getElementById('cat-'+c).classList.toggle('active', c === cat);
+  });
+  G = freshState(cat, 0);
+  initGame();
+}
+
+/* ═══════════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════════ */
+function showTab(t) {
+  ['play','stats','shop'].forEach(id => {
+    document.getElementById('s-'+id).classList.toggle('on', id===t);
+    document.getElementById('t-'+id).classList.toggle('on', id===t);
+  });
+  document.getElementById('fb-bar').parentElement.style.display = t==='play' ? '' : 'none';
+  if (t==='stats') renderStats();
+}
+
+/* ═══════════════════════════════════════════════════════
+   FEEDBACK
+═══════════════════════════════════════════════════════ */
+function fb(msg, cls) {
+  const el = document.getElementById('fb-bar');
+  el.innerHTML = msg;
+  el.className = 'fb ' + cls;
+  clearTimeout(fbTimer);
+  if (cls !== 'hide') fbTimer = setTimeout(() => { if (!G.over) el.className='fb hide'; }, 4500);
+}
+
+/* ═══════════════════════════════════════════════════════
+   HANGMAN
+═══════════════════════════════════════════════════════ */
+function updateHangman() {
+  const show = Math.min(G.attempts, STAGES.length);
+  STAGES.forEach((ids, i) => {
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const shouldShow = i < show;
+      if (shouldShow && !el.classList.contains('show')) {
+        el.classList.add('show');
+        // At stage 9 (frown), hide the smile
+        if (id === 'p9') document.getElementById('p4')?.classList.remove('show');
+        // At stage 12 (X eyes), hide normal eyes
+        if (id === 'p12c') {
+          document.getElementById('p3a')?.classList.remove('show');
+          document.getElementById('p3b')?.classList.remove('show');
+          document.getElementById('p4')?.classList.remove('show');
+          document.getElementById('p9')?.classList.remove('show');
+        }
+      } else if (!shouldShow) {
+        el.classList.remove('show');
+      }
+    });
+  });
+
+  // Pips
+  const pipsEl = document.getElementById('hang-pips');
+  pipsEl.innerHTML = '';
+  for (let i = 0; i < maxAtt(); i++) {
+    const pip = document.createElement('div');
+    pip.className = 'pip' + (i < G.attempts ? ' used' : '');
+    pipsEl.appendChild(pip);
+  }
+  document.getElementById('hang-att-num').textContent = Math.max(0, attLeft());
+}
+
+/* ═══════════════════════════════════════════════════════
+   BOARD
+═══════════════════════════════════════════════════════ */
+function renderBoard(newSpots = {}) {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  G.puzzle.words.forEach((word, wi) => {
+    const isSolved = G.solved[wi];
+    const spotSet  = G.spotlit[wi]; // always a Set — never null
+    const hasSpot  = spotSet.size > 0 && !isSolved;
+
+    const row = document.createElement('div');
+    row.className = 'word-row' + (isSolved ? ' solved' : hasSpot ? ' spotlit' : '');
+
+    const hint = document.createElement('div');
+    hint.className = 'word-hint';
+    hint.textContent = G.puzzle.hints[wi];
+    row.appendChild(hint);
+
+    const tilesDiv = document.createElement('div');
+    tilesDiv.className = 'tiles';
+
+    word.split('').forEach((ch, li) => {
+      if (ch === ' ') {
+        const g = document.createElement('div'); g.className='space-gap'; tilesDiv.appendChild(g); return;
+      }
+      const tile = document.createElement('div');
+      const isNew = (newSpots[wi] || []).includes(li);
+
+      if (isSolved) {
+        tile.className = 'tile t-solved';
+        tile.textContent = ch;
+        if (isNew) tile.style.animationDelay = (li * 55) + 'ms';
+      } else if (G.gaveUp && !spotSet.has(li)) {
+        tile.className = 'tile t-gave';
+        tile.textContent = ch;
+      } else if (spotSet.has(li)) {
+        tile.className = 'tile t-spot';
+        tile.textContent = ch;
+        if (isNew) tile.style.animationDelay = (li * 55) + 'ms';
+      } else {
+        tile.className = 'tile';
+        tile.textContent = '';
+      }
+      tilesDiv.appendChild(tile);
+    });
+
+    row.appendChild(tilesDiv);
+    board.appendChild(row);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   LENGTH CHIPS
+═══════════════════════════════════════════════════════ */
+function renderChips() {
+  const el = document.getElementById('len-chips');
+  while (el.children.length > 1) el.removeChild(el.lastChild);
+  const unsolved = new Set(), solved = new Set();
+  G.puzzle.words.forEach((w, i) => {
+    const len = w.replace(/ /g,'').length;
+    (G.solved[i] ? solved : unsolved).add(len);
+  });
+  const all = new Set([...unsolved, ...solved]);
+  [...all].sort((a,b)=>a-b).forEach(len => {
+    const chip = document.createElement('div');
+    const done = solved.has(len) && !unsolved.has(len);
+    chip.className = 'chip' + (done ? ' done' : '');
+    chip.textContent = len + ' letters';
+    if (!done) chip.onclick = () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    };
+    el.appendChild(chip);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   HISTORY
+═══════════════════════════════════════════════════════ */
+function renderHistory() {
+  const sec = document.getElementById('hist-sec');
+  const lst = document.getElementById('hist-list');
+  if (G.history.length === 0) { sec.style.display='none'; return; }
+  sec.style.display = 'block';
+  lst.innerHTML = G.history.slice().reverse().map(h => {
+    const m = { solved:['hs','ts','✓ Solved'], spot:['hsp','tsp','✦ Spotlight'], wrong:['hw','tw','✗ Rejected'] };
+    const [wc,tc,lbl] = m[h.type] || m.wrong;
+    return `<div class="hi">
+      <div class="hi-word ${wc}">${h.word}</div>
+      <div class="hi-tag ${tc}">${lbl}</div>
+      <div class="hi-note">${h.note||''}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════════════
+   SUBMIT GUESS
+═══════════════════════════════════════════════════════ */
+async function submitGuess() {
+  if (G.over) return;
+  const inp  = document.getElementById('guess-in');
+  const raw  = inp.value.trim().toUpperCase().replace(/[^A-Z]/g,'');
+  if (!raw || raw.length < 2) { fb('Type a word first!', 'bad'); return; }
+
+  const len = raw.length;
+
+  // ── 1. Check length matches at least one unsolved word ──
+  const validLen = G.puzzle.words.some((w, i) => !G.solved[i] && w.replace(/ /g,'').length === len);
+  if (!validLen) {
+    fb(`✗ No unsolved word has ${len} letter${len>1?'s':''}. Check the length chips below.`, 'bad');
+    inp.classList.add('shake');
+    inp.addEventListener('animationend', () => inp.classList.remove('shake'), {once:true});
+    G.history.push({word:raw, type:'wrong', note:`${len} letters — no match`});
+    renderHistory();
+    return;
+  }
+
+  // ── 2. Dictionary check ──
+  const btn = document.getElementById('btn-go');
+  btn.classList.add('loading'); btn.disabled = true; inp.disabled = true;
+
+  const valid = await isRealWord(raw);
+
+  btn.classList.remove('loading'); btn.disabled = false; inp.disabled = false;
+  inp.value = ''; inp.focus();
+
+  if (!valid) {
+    fb(`✗ "${raw}" isn't a real word — only valid English words are accepted!`, 'bad');
+    inp.classList.add('shake');
+    inp.addEventListener('animationend', () => inp.classList.remove('shake'), {once:true});
+    G.history.push({word:raw, type:'wrong', note:'not in dictionary'});
+    renderHistory();
+    return;
+  }
+
+  // ── 3. Valid guess — count it ──
+  G.attempts++;
+  updateHangman();
+
+  // ── 4. Exact match? ──
+  const exactIdx = G.puzzle.words.findIndex((w, i) => !G.solved[i] && w.replace(/ /g,'') === raw);
+  if (exactIdx !== -1) {
+    G.solved[exactIdx] = true;
+    const newSpots = { [exactIdx]: G.puzzle.words[exactIdx].split('').map((_,i)=>i) };
+    renderBoard(newSpots);
+    renderChips();
+    const rem = G.puzzle.words.length - countSolved();
+    fb(rem === 0 ? `✓ "${raw}" — that's the last one!` : `✓ "${raw}" — solved! <strong>${rem}</strong> word${rem>1?'s':''} left.`, 'good');
+    G.history.push({word:raw, type:'solved', note:`${rem} remaining`});
+    renderHistory();
+    if (allSolved()) { setTimeout(() => finishGame(true), 700); return; }
+
+  } else {
+    // ── 5. SPOTLIGHT — right length, wrong word ──
+    // For each unsolved word, check which of its letters appear in the guess.
+    // Use a Set of guess letters for O(1) lookup.
+    const guessLetterSet = new Set(raw.split(''));
+    const newSpots = {};
+    let totalNew = 0, wordsLit = 0;
+
+    G.puzzle.words.forEach((word, wi) => {
+      if (G.solved[wi]) return;
+      // Only spotlight words whose length matches the guess
+      if (word.replace(/ /g,'').length !== len) return;
+
+      let wordGotNew = false;
+      word.split('').forEach((ch, li) => {
+        if (ch === ' ') return;
+        // Spotlight this position if guess contains the letter AND it's not already spotlit
+        if (guessLetterSet.has(ch) && !G.spotlit[wi].has(li)) {
+          G.spotlit[wi].add(li);
+          if (!newSpots[wi]) newSpots[wi] = [];
+          newSpots[wi].push(li);
+          totalNew++;
+          wordGotNew = true;
+        }
+      });
+      if (wordGotNew) wordsLit++;
+    });
+
+    // Also spotlight matching letters in words of DIFFERENT lengths
+    // (letters that happen to appear there too, even though guess length didn't match)
+    G.puzzle.words.forEach((word, wi) => {
+      if (G.solved[wi]) return;
+      if (word.replace(/ /g,'').length === len) return; // already handled above
+      let wordGotNew = false;
+      word.split('').forEach((ch, li) => {
+        if (ch === ' ') return;
+        if (guessLetterSet.has(ch) && !G.spotlit[wi].has(li)) {
+          G.spotlit[wi].add(li);
+          if (!newSpots[wi]) newSpots[wi] = [];
+          newSpots[wi].push(li);
+          totalNew++;
+          wordGotNew = true;
+        }
+      });
+      if (wordGotNew) wordsLit++;
+    });
+
+    renderBoard(newSpots);
+
+    if (totalNew > 0) {
+      fb(`✦ "${raw}" — spotlighted <strong>${totalNew}</strong> letter${totalNew>1?'s':''} across <strong>${wordsLit}</strong> word${wordsLit>1?'s':''}!`, 'spot');
+      G.history.push({word:raw, type:'spot', note:`${totalNew} letters in ${wordsLit} words`});
+    } else {
+      fb(`✦ "${raw}" — none of its letters appear in any remaining word.`, 'bad');
+      G.history.push({word:raw, type:'spot', note:'no new letters'});
+    }
+    renderHistory();
+  }
+
+  if (G.attempts >= maxAtt() && !allSolved()) {
+    setTimeout(() => finishGame(false), 900);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   FINISH
+═══════════════════════════════════════════════════════ */
+function finishGame(won) {
+  G.over = true;
+  document.getElementById('guess-in').disabled = true;
+  document.getElementById('btn-go').disabled   = true;
+  updateHangman();
+
+  let bonusCoins = 0;
+  if (won && !G.gaveUp) {
+    G.won++; G.streak++;
+    bonusCoins = G.attempts <= 4 ? 6 : G.attempts <= 7 ? 4 : 3;
+    G.coins   += bonusCoins;
+    G.recent.unshift({cat:G.category, theme:G.puzzle.theme, found:countSolved(), att:G.attempts, won:true});
+    if (G.best === 0 || G.attempts < G.best) G.best = G.attempts;
+  } else {
+    G.streak = 0;
+    G.gaveUp = true;
+    renderBoard();
+    G.recent.unshift({cat:G.category, theme:G.puzzle.theme, found:countSolved(), att:G.attempts, won:false});
+  }
+  G.played++;
+  document.getElementById('ad-banner').style.display = 'none';
+
+  const total = G.puzzle.words.length, found = countSolved();
+  const catIcon = {movies:'🎬', books:'📚', capitals:'🌍'}[G.category];
+  document.getElementById('res-emoji').textContent = !won?'💀':G.attempts<=5?'🏆':G.attempts<=8?'⭐':'✨';
+  document.getElementById('res-title').textContent = !won?'Out of attempts!':G.attempts<=5?'Brilliant!':'Theme solved!';
+  document.getElementById('res-sub').innerHTML     = won
+    ? `Found all ${total} ${catIcon} words in <strong>${G.attempts}</strong> attempt${G.attempts===1?'':'s'}!`
+    : `Found ${found} of ${total} words — better luck next time!`;
+  document.getElementById('res-words').innerHTML   = G.puzzle.words.map((w,i)=>
+    `<div class="res-word${G.solved[i]?'':' missed'}">${w}</div>`).join('');
+  document.getElementById('rs-f').textContent = found+'/'+total;
+  document.getElementById('rs-a').textContent = G.attempts;
+  document.getElementById('rs-c').textContent = won?'+'+bonusCoins:'+0';
+  document.getElementById('rs-s').textContent = G.streak;
+  document.getElementById('streak-val').textContent = G.streak;
+
+  setTimeout(() => document.getElementById('res-ov').classList.add('show'), 700);
+}
+
+function closeResult() {
+  document.getElementById('res-ov').classList.remove('show');
+  showTab('stats');
+}
+
+/* ═══════════════════════════════════════════════════════
+   GIVE UP
+═══════════════════════════════════════════════════════ */
+function askGiveUp() { if (!G.over) document.getElementById('conf-ov').classList.add('show'); }
+function closeConf() { document.getElementById('conf-ov').classList.remove('show'); }
+function doGiveUp()  {
+  closeConf(); G.gaveUp=true; G.over=true;
+  document.getElementById('guess-in').disabled=true;
+  document.getElementById('btn-go').disabled=true;
+  renderBoard(); finishGame(false);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SHARE
+═══════════════════════════════════════════════════════ */
+function shareResult() {
+  const emoji = G.puzzle.words.map((_,i)=>G.solved[i]?'🟩':'⬜').join('');
+  const icon  = {movies:'🎬',books:'📚',capitals:'🌍'}[G.category];
+  const txt   = [
+    `ThemeHang v2 ${icon} — ${G.puzzle.theme}`,
+    emoji,
+    `Found ${countSolved()}/${G.puzzle.words.length} · ${G.attempts} attempts`,
+    `Play free at themehang.app`
+  ].join('\n');
+  const done = () => { const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400); };
+  navigator.clipboard?.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done)) || fallbackCopy(txt,done);
+}
+function fallbackCopy(txt,cb){
+  const ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;opacity:0';
+  document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(ta);cb();
+}
+
+/* ═══════════════════════════════════════════════════════
+   STATS
+═══════════════════════════════════════════════════════ */
+function renderStats() {
+  document.getElementById('ss-p').textContent = G.played;
+  document.getElementById('ss-w').textContent = Math.round(G.won/Math.max(1,G.played)*100)+'%';
+  document.getElementById('ss-s').textContent = G.streak;
+  document.getElementById('ss-b').textContent = G.best || '—';
+  const mx = Math.max(...G.edist, 1);
+  document.getElementById('dist-cont').innerHTML = G.edist.map((v,i)=>`
+    <div class="dist-row">
+      <div class="dist-n">${i*2+1}–${i*2+2}</div>
+      <div class="dist-wrap"><div class="dist-fill" style="width:${Math.round(v/mx*100)}%"><span>${v}</span></div></div>
+    </div>`).join('');
+  const rel = document.getElementById('recent-list');
+  const icons = {movies:'🎬',books:'📚',capitals:'🌍'};
+  rel.innerHTML = G.recent.length === 0
+    ? '<div style="font-size:12px;color:var(--ink3);text-align:center;padding:9px">Complete a puzzle to see results</div>'
+    : G.recent.slice(0,5).map(r=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 11px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:5px">
+        <div style="font-size:14px">${r.won&&r.att<=5?'🏆':r.won?'⭐':'💀'}</div>
+        <div style="font-size:13px">${icons[r.cat]||''}</div>
+        <div style="flex:1;min-width:0;font-size:11px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.theme}</div>
+        <div style="font-size:10px;color:var(--ink3);flex-shrink:0">${r.found} found · ${r.att} att.</div>
+      </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════════════════
+   MONETISATION
+═══════════════════════════════════════════════════════ */
+function buyPro()           { alert('Integrate Stripe or RevenueCat for Pro.'); }
+function buyCoin(q,p)       { alert(`${q} coins for $${p} — integrate Stripe here.\nOn success: G.coins += ${q};`); }
+function adClick()          { console.log('Ad click'); }
+function restorePurchases() { alert('Connect your IAP provider.'); }
+
+/* ═══════════════════════════════════════════════════════
+   HOW TO
+═══════════════════════════════════════════════════════ */
+function openHow()  { document.getElementById('how-ov').classList.add('show'); }
+function closeHow() { document.getElementById('how-ov').classList.remove('show'); }
+
+/* ═══════════════════════════════════════════════════════
+   KEYBOARD
+═══════════════════════════════════════════════════════ */
+document.getElementById('guess-in').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitGuess();
+});
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════ */
+function initGame() {
+  const p = G.puzzle;
+  document.getElementById('theme-emoji').textContent = p.emoji;
+  document.getElementById('theme-name').textContent  = p.theme;
+  document.getElementById('puzzle-num').textContent  = '#' + (G.puzzleIdx + 1);
+  document.getElementById('guess-in').disabled  = false;
+  document.getElementById('btn-go').disabled    = false;
+  document.getElementById('ad-banner').style.display = '';
+  fb('', 'hide');
+
+  // Reset hangman visual
+  document.querySelectorAll('.hp').forEach(el => el.classList.remove('show'));
+  // Restore smile + eyes (may have been hidden in previous game)
+  ['p4','p3a','p3b'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show'); // will be shown at correct stage
+  });
+
+  updateHangman();
+  renderBoard();
+  renderChips();
+  renderHistory();
+}
+
+initGame();
+</script>
+</body>
+</html>
